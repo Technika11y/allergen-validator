@@ -1,0 +1,6 @@
+{
+  "name": "Sardine Toast",
+  "regime": "US",
+  "ingredients": ["sourdough", "sardine", "butter"],
+  "declared_allergens": ["fish", "wheat", "milk"]
+}

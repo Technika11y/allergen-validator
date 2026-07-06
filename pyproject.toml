@@ -1,0 +1,18 @@
+[project]
+name = "technika11y-allergen-validator"
+version = "0.1.0a0"
+description = "Validates that a dish's declared allergens match the allergens implied by its ingredients (FALCPA Big-9 / EU FIC). Fails closed on an undeclared allergen."
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+keywords = ["allergens", "food-safety", "falcpa", "eu-fic", "food-service", "compliance"]
+
+[project.scripts]
+allergen-validator = "allergen.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["allergen"]
