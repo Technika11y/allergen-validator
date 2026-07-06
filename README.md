@@ -11,6 +11,13 @@
 
 ---
 
+## Quick start
+
+```bash
+git clone https://github.com/technika11y/allergen-validator && cd allergen-validator
+PYTHONPATH=src python3 -m allergen.cli examples/dish.json
+```
+
 ## Status — read this first
 
 **Pre-alpha (`v0.1.0a0`). Honest state of the code:**
