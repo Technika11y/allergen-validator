@@ -67,6 +67,23 @@ def validate(dish):
         findings.append(_f("unknown-ingredient", "warn",
             f'ingredient "{ing}" is not in the allergen knowledge base — verify its allergens manually'))
 
+    # 5. precautionary allergen labelling (PAL): the shared facility handles an allergen that is
+    #    not an ingredient here and carries no "may contain" advisory. Cross-contact is a real
+    #    hazard for sensitive diners, so surface it.
+    facility = {str(a).strip().lower() for a in dish.get("facility_allergens", [])}
+    may_contain = {str(a).strip().lower() for a in dish.get("may_contain", [])}
+    for a in facility:
+        if a in regime_allergens and a not in derived and a not in declared and a not in may_contain:
+            findings.append(_f("facility-cross-contact", "warn",
+                f'the facility also handles "{a}", which is not an ingredient here and has no '
+                f'"may contain" advisory — consider precautionary labelling'))
+
+    # 6. a "may contain" advisory that isn't a recognised allergen label
+    for a in may_contain:
+        if a not in regime_allergens:
+            findings.append(_f("may-contain-not-in-regime", "warn",
+                f'"may contain {a}" is not a {regime} major-allergen label — typo or non-standard'))
+
     return findings
 
 

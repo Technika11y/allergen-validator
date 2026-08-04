@@ -29,6 +29,7 @@ PYTHONPATH=src python3 -m allergen.cli examples/dish.json
 | Multi-allergen ingredients (e.g. soy sauce → soybeans + wheat) | ✅ works, tested |
 | Warn on declared labels not in the regime's official list | ✅ works, tested |
 | Warn on unknown ingredients (can't verify → manual review) | ✅ works, tested |
+| Precautionary labelling (PAL): flag facility cross-contact with no "may contain" advisory | ✅ works, tested |
 | US Big-9 regime | ✅ works, tested |
 | EU FIC regime | ⚠️ partial — only the `wheat→gluten`, `shellfish→crustaceans` bridges; extend before EU use |
 | Ingredient knowledge base | ⚠️ small starter map — extend for production |
@@ -59,7 +60,8 @@ PYTHONPATH=src python -m allergen.cli examples/dish.json
 
 - [ ] Full ingredient knowledge base + fuzzy matching
 - [ ] Complete EU FIC (14) + label localisation
-- [ ] "May contain" / cross-contact modelling
+- [x] "May contain" / cross-contact (facility PAL) modelling — basic
+- [ ] Cross-contact via shared-equipment graphs + fuzzy compound-ingredient matching
 - [ ] Ingest recipes from POS/menu formats (pairs with `menu-a11y-engine`)
 - [ ] SARIF output + the shared Technika11y CI gate
 

@@ -3,8 +3,10 @@ import unittest
 from allergen.validate import validate, has_errors
 
 
-def dish(ingredients, declared, regime="US", name="Test"):
-    return {"name": name, "regime": regime, "ingredients": ingredients, "declared_allergens": declared}
+def dish(ingredients, declared, regime="US", name="Test", **extra):
+    d = {"name": name, "regime": regime, "ingredients": ingredients, "declared_allergens": declared}
+    d.update(extra)
+    return d
 
 
 def rules(d):
@@ -39,6 +41,26 @@ class ValidateTests(unittest.TestCase):
 
     def test_eu_gluten_declared_passes(self):
         self.assertFalse(has_errors(validate(dish(["wheat flour"], ["gluten"], regime="EU"))))
+
+    def test_facility_cross_contact_warns(self):
+        # peanuts aren't an ingredient, but the shared facility handles them and there's no advisory
+        findings = validate(dish(["salmon"], ["fish"], facility_allergens=["peanuts"]))
+        self.assertTrue(any(f["rule"] == "facility-cross-contact" and f["severity"] == "warn" for f in findings))
+
+    def test_facility_allergen_with_may_contain_is_ok(self):
+        r = rules(dish(["salmon"], ["fish"], facility_allergens=["peanuts"], may_contain=["peanuts"]))
+        self.assertNotIn("facility-cross-contact", r)
+
+    def test_facility_allergen_that_is_an_ingredient_is_not_cross_contact(self):
+        # butter -> milk is a real ingredient; declaring it means no cross-contact warning for milk
+        r = rules(dish(["butter"], ["milk"], facility_allergens=["milk"]))
+        self.assertNotIn("facility-cross-contact", r)
+
+    def test_facility_cross_contact_is_not_an_error(self):
+        self.assertFalse(has_errors(validate(dish(["salmon"], ["fish"], facility_allergens=["peanuts"]))))
+
+    def test_may_contain_typo_warns(self):
+        self.assertIn("may-contain-not-in-regime", rules(dish(["salmon"], ["fish"], may_contain=["peanutz"])))
 
 
 if __name__ == "__main__":
